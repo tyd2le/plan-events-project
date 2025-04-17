@@ -111,7 +111,7 @@ public class Main {
 
         while (true){
             System.out.print("login: ");
-            login = scan.nextLine();
+            login = scan.next();
 
             if(HM_login.get(login) == null){
                 HM_login.put(login, true);
@@ -124,7 +124,7 @@ public class Main {
 
         while (true){
             System.out.print("email: ");
-            email = scan.nextLine();
+            email = scan.next();
 
             if(HM_email.get(email) == null){
                 HM_email.put(email, true);
@@ -146,7 +146,7 @@ public class Main {
 
             System.out.print("password: ");
 
-            password = scan.nextLine();
+            password = scan.next();
 
             if (password.length() >= 4){
                 for (int i=0; i<password.length(); ++i){
@@ -170,7 +170,7 @@ public class Main {
         while (true) {
             System.out.print("repeat password: ");
 
-            if (scan.nextLine().equals(password)){
+            if (scan.next().equals(password)){
                 break;
             }
             else{
@@ -221,7 +221,7 @@ public class Main {
 
         while(true){
             System.out.print("login: ");
-            login = scan.nextLine();
+            login = scan.next();
 
             if(HM_login.get(login) != null){
                 break;
@@ -234,7 +234,7 @@ public class Main {
 
         while(true) {
             System.out.print("password: ");
-            password = scan.nextLine();
+            password = scan.next();
 
             if (password.equals(HM_password.get(login))){
                 break;
@@ -300,7 +300,6 @@ public class Main {
                 }
 
                 System.out.println("press any key to continue");
-                scan.nextLine();
                 scan.nextLine();
             }
             else if (n == 2) {
@@ -397,7 +396,7 @@ public class Main {
                         System.out.println("unexpected input");
                     }
                 }
-                if (the_end == false){
+                if (!the_end){
                     break;
                 }
             }
