@@ -15,16 +15,18 @@ public class Main {
 
     public static HashMap<String, String> HM_password = new HashMap<>();
 
-    public static String current_login = "";
+    public static String current_login;
 
-    public static ArrayList<String> your_plan = new ArrayList<>();
+    public static ArrayList<String> current_plan = new ArrayList<>();
 
     public static void data_base(){
         try {
             File file = new File("data_base.txt");
+
             if (file.createNewFile()) {
                 System.out.println("Файл создан");
-            } else {
+            }
+            else {
                 System.out.println("Файл уже существует");
             }
         }
@@ -42,6 +44,7 @@ public class Main {
                 if (line.isEmpty()){
                     continue;
                 }
+
                 String login = "";
                 String email = "";
                 String password = "";
@@ -49,21 +52,16 @@ public class Main {
                 for (int i=0, k=0, c=0; i<line.length(); ++i){
                     if (line.charAt(i) == ' ' || i+1 == line.length()){
                         ++c;
-                        for (int j=k; j<i; ++j){
-                            if (c == 1){
-                                login += line.charAt(j);
-                            }
-                            else if (c == 2){
-                                email += line.charAt(j);
-                            }
-                            else{
-                                password += line.charAt(j);
-                            }
+                        if (c == 1){
+                            login = line.substring(k, i);
+                        }
+                        else if (c == 2){
+                            email = line.substring(k, i);
+                        }
+                        else{
+                            password = line.substring(k, i+1);
                         }
                         k = i+1;
-                    }
-                    if (i+1 == line.length()){
-                        password += line.charAt(i);
                     }
                 }
                 logins.add(login + " " + email + " " + password);
@@ -74,7 +72,8 @@ public class Main {
             }
 
             bufferedReader.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Ошибка при чтении файла");
         }
     }
@@ -91,6 +90,7 @@ public class Main {
             if (n == 1){
                 sign_up();
                 sign_in();
+                break;
             }
             else if (n == 2){
                 sign_in();
@@ -105,11 +105,11 @@ public class Main {
     public static void sign_up() {
         Scanner scan = new Scanner(System.in);
 
-        String login = "";
-        String email = "";
+        String login;
+        String email;
         String password = "";
 
-        while (true) {
+        while (true){
             System.out.print("login: ");
             login = scan.nextLine();
 
@@ -117,12 +117,12 @@ public class Main {
                 HM_login.put(login, true);
                 break;
             }
-            else {
+            else{
                 System.out.println("this login is exist");
             }
         }
 
-        while (true) {
+        while (true){
             System.out.print("email: ");
             email = scan.nextLine();
 
@@ -130,7 +130,7 @@ public class Main {
                 HM_email.put(email, true);
                 break;
             }
-            else {
+            else{
                 System.out.println("this email is exist");
             }
         }
@@ -141,16 +141,21 @@ public class Main {
             System.out.println("---------------------------------------------------");
             System.out.println("length of password must be longer than/or 4 symbols");
             System.out.println("in password must include a letter");
+            System.out.println("space is not valuable");
             System.out.println("---------------------------------------------------");
 
             System.out.print("password: ");
 
             password = scan.nextLine();
-            String password2 = password.toLowerCase();
 
             if (password.length() >= 4){
-                for (char x='a'; x<='z'; ++x){
-                    if (password2.indexOf(x) != -1){
+                for (int i=0; i<password.length(); ++i){
+                    if (password.charAt(i) >= 'a' && password.charAt(i) <= 'z'){
+                        HM_password.put(login, password);
+                        again = false;
+                        break;
+                    }
+                    if (password.charAt(i) >= 'A' && password.charAt(i) <= 'Z'){
                         HM_password.put(login, password);
                         again = false;
                         break;
@@ -179,13 +184,14 @@ public class Main {
     public static void save_login(String login, String email, String password){
         try {
             File file = new File(login + ".txt");
-            if (file.createNewFile()) {
+            if (file.createNewFile()){
                 System.out.println("Файл создан");
-            } else {
+            }
+            else{
                 System.out.println("Файл уже существует");
             }
         }
-        catch (IOException e) {
+        catch (IOException e){
             System.out.println("Ошибка при создании файла");
         }
 
@@ -210,8 +216,8 @@ public class Main {
     public static void sign_in(){
         Scanner scan = new Scanner(System.in);
 
-        String login = "";
-        String password = "";
+        String login;
+        String password;
 
         while(true){
             System.out.print("login: ");
@@ -224,7 +230,7 @@ public class Main {
                 System.out.println("this login is not exist");
             }
         }
-        current_login = login;
+        current_login = login + ".txt";
 
         while(true) {
             System.out.print("password: ");
@@ -239,23 +245,23 @@ public class Main {
         }
     }
 
-    public static void current_plan(){
-        File file = new File(current_login + ".txt");
-        if (file.exists()) {
-            try {
-                FileReader fileReader = new FileReader(current_login + ".txt");
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
+    public static void information_from_plan(){
+        try {
+            FileReader fileReader = new FileReader(current_login);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    your_plan.add(line);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.isEmpty()){
+                    continue;
                 }
+               current_plan.add(line);
+            }
 
-                bufferedReader.close();
-            }
-            catch (IOException e) {
-                System.out.println("Ошибка при чтении файла");
-            }
+            bufferedReader.close();
+        }
+        catch (IOException e) {
+            System.out.println("Ошибка при чтении файла");
         }
     }
 
@@ -273,15 +279,16 @@ public class Main {
             int n = scan.nextInt();
 
             if (n == 1){
+                scan.nextLine();
                 String s = scan.nextLine();
 
-                your_plan.add(s);
+                current_plan.add(s);
 
                 try {
-                    FileWriter fileWriter = new FileWriter(current_login + ".txt");
+                    FileWriter fileWriter = new FileWriter(current_login);
                     BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-                    for (String x : your_plan){
+                    for (String x : current_plan){
                         bufferedWriter.write(x);
                         bufferedWriter.newLine();
                     }
@@ -291,18 +298,26 @@ public class Main {
                 catch (IOException e) {
                     System.out.println("Ошибка при записи в файл");
                 }
+
+                System.out.println("press any key to continue");
+                scan.nextLine();
+                scan.nextLine();
             }
-            if (n == 2) {
+            else if (n == 2) {
                 try {
-                    FileReader fileReader = new FileReader(current_login + ".txt");
+                    FileReader fileReader = new FileReader(current_login);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);
 
                     String line;
                     int c = 0;
 
                     while ((line = bufferedReader.readLine()) != null) {
+                        if (line.isEmpty()){
+                            System.out.println("plan is empty");
+                            break;
+                        }
                         ++c;
-                        System.out.println((c+'0') + ". " + line);
+                        System.out.println(c + ". " + line);
                     }
 
                     bufferedReader.close();
@@ -310,26 +325,34 @@ public class Main {
                 catch (IOException e) {
                     System.out.println("Ошибка при чтении файла");
                 }
+
+                System.out.println("press any key to continue");
+                scan.nextLine();
+                scan.nextLine();
             }
             else if (n == 3) {
                 while (true) {
+                    if (current_plan.isEmpty()){
+                        System.out.println("plan is empty");
+                        break;
+                    }
                     System.out.println("what number of plan do you want to delete?");
 
                     int n2 = scan.nextInt();
                     --n2;
 
-                    if (n2 >= your_plan.size()){
+                    if (n2 >= current_plan.size()){
                         System.out.println("unexpected input");
                         continue;
                     }
 
-                    your_plan.remove(n2);
+                    current_plan.remove(n2);
 
                     try {
-                        FileWriter fileWriter = new FileWriter(current_login + ".txt");
+                        FileWriter fileWriter = new FileWriter(current_login);
                         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-                        for (String x : your_plan) {
+                        for (String x : current_plan) {
                             bufferedWriter.write(x);
                             bufferedWriter.newLine();
                         }
@@ -342,19 +365,40 @@ public class Main {
 
                     break;
                 }
+                System.out.println("press any key to continue");
+                scan.nextLine();
+                scan.nextLine();
             }
             else if (n == 4){
-                System.out.println("are you exiting?");
-                System.out.println("1 - yes");
-                System.out.println("2 - no");
+                boolean the_end = true;
 
-                int n2 = scan.nextInt();
+                while (true) {
+                    System.out.println("you want to exit?");
+                    System.out.println("1 - yes");
+                    System.out.println("2 - no");
 
-                if (n2 == 1){
-                    break;
+                    int n2 = scan.nextInt();
+
+                    if (n2 == 1) {
+                        System.out.println("see you again");
+                        the_end = false;
+                        break;
+                    }
+                    else if (n2 == 2) {
+                        System.out.println("welcome again");
+
+                        System.out.println("press any key to continue");
+                        scan.nextLine();
+                        scan.nextLine();
+
+                        break;
+                    }
+                    else {
+                        System.out.println("unexpected input");
+                    }
                 }
-                else{
-                    System.out.println("welcome again");
+                if (the_end == false){
+                    break;
                 }
             }
             else {
@@ -368,7 +412,7 @@ public class Main {
 
         sign_up_or_sign_in();
 
-        current_plan();
+        information_from_plan();
 
         plan();
     }
